@@ -9,6 +9,7 @@ app.use(cors());
 app.set('view engine', 'ejs');
 const Users=[]
 const port = process.env.port ;
+const userRoute=require('./routes/user.route');
 const mongoDB_URI = process.env.mongo_URI;
 mongoose.connect(mongoDB_URI )
 .then(() => {
@@ -20,24 +21,9 @@ mongoose.connect(mongoDB_URI )
 app.get('/', (req, res) => {
     res.render('signUp');
 });
-const usersSchema = new mongoose.Schema({
-    firstName: {type: String, required: true},
-    lastName: {type: String, required: true},
-    email: {type: String, required: true, unique: true},
-    password: {type: String, required: true}
-});
-const User = mongoose.model('User', usersSchema);
-app.post('/register', (req, res) => {
-    try{
-        const newUser= new User(req.body);
-        newUser.save()
-            console.log("User saved:",User);
-            res.send('You have been registered successfully!');
-    } catch (error) {
-        console.error('Error registering user:', error);
-        res.status(500).send('Error registering user');
-    }
-});
+
+
+app.use('/user', userRoute);
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
